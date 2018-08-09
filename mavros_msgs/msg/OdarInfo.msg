@@ -5,6 +5,7 @@ bool fuse_p
 bool fuse_v
 bool fuse_q
 bool fuse_w
+bool fuse_multi
 
 bool feedback_p
 bool feedback_d

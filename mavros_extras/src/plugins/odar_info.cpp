@@ -51,6 +51,7 @@ void handle_odar_info(const mavlink_message_t *msg, uint8_t sysid, uint8_t compi
 	ros_msg->fuse_v = odar_info.fuse_flag & (1 << 1);
 	ros_msg->fuse_q = odar_info.fuse_flag & (1 << 2);
 	ros_msg->fuse_w = odar_info.fuse_flag & (1 << 3);
+	ros_msg->fuse_multi = odar_info.fuse_flag & (1 << 4);
 
 	ros_msg->gravity_on = odar_info.feedback_flag & (1 << 0);
 	ros_msg->feedback_p = odar_info.feedback_flag & (1 << 1);

@@ -83,6 +83,7 @@ add_library(mavros_extras
   src/plugins/odar_desired_pose.cpp
   src/plugins/odar_fused_pose.cpp
   src/plugins/odar_pose.cpp
+  src/plugins/estimator_status.cpp
 )
 target_link_libraries(mavros_extras
   ${mavros_LIBRARIES}

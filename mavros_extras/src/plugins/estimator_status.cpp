@@ -46,7 +46,7 @@ private:
 		ns = (estimator_status.time_usec - sec*1000000)*1000;
 		ros_msg->header.stamp = ros::Time(sec, ns);
 
-		for(int i = 0; i < 24; i++) {
+		for(int i = 0; i < 7; i++) {
 			ros_msg->covariances[i] = estimator_status.covariances[i];
 		}
 		

@@ -46,9 +46,15 @@ private:
 		ns = (estimator_status.time_usec - sec*1000000)*1000;
 		ros_msg->header.stamp = ros::Time(sec, ns);
 
-		for(int i = 0; i < 7; i++) {
-			ros_msg->covariances[i] = estimator_status.covariances[i];
-		}
+		//ros_msg->covariances[i] = estimator_status.covariances[i];
+		ros_msg->cov_qw = estimator_status.cov_qw;
+		ros_msg->cov_qx = estimator_status.cov_qx;
+		ros_msg->cov_qy = estimator_status.cov_qy;
+		ros_msg->cov_qz = estimator_status.cov_qz;
+		ros_msg->cov_px = estimator_status.cov_px;
+		ros_msg->cov_py = estimator_status.cov_py;
+		ros_msg->cov_pz = estimator_status.cov_pz;
+
 		
 		estimator_status_pub.publish(ros_msg);
 	}

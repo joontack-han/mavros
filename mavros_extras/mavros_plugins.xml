@@ -45,6 +45,9 @@
 	<class name="odar_fused_pose" type="mavplugin::OdarFusedPosePlugin" base_class_type="mavplugin::MavRosPlugin">
 		<description> Odar Fused Pose </description>
 	</class>
+	<class name="odar_fused_vel" type="mavplugin::OdarFusedVelPlugin" base_class_type="mavplugin::MavRosPlugin">
+		<description> Odar Fused Vel </description>
+	</class>
 	<class name="odar_pose" type="mavplugin::OdarPosePlugin" base_class_type="mavplugin::MavRosPlugin">
 		<description> Odar Pose </description>
 	</class>

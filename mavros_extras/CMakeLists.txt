@@ -82,6 +82,7 @@ add_library(mavros_extras
   src/plugins/odar_channel_command.cpp
   src/plugins/odar_desired_pose.cpp
   src/plugins/odar_fused_pose.cpp
+  src/plugins/odar_fused_vel.cpp
   src/plugins/odar_pose.cpp
   src/plugins/estimator_status.cpp
 )

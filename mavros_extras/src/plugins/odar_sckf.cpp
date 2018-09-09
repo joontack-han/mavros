@@ -33,10 +33,9 @@ namespace mavplugin {
 				mavlink_message_t msg;
 				mavlink_msg_odar_sckf_pack_chan(UAS_PACK_CHAN(uas), &msg, 
 					req->header.stamp.toNSec() / 1000,
-					req->link_idx,
-					req->constraint_error[0], req->constraint_error[1], req->constraint_error[2], req->constraint_error[3], req->constraint_error[4], req->constraint_error[5],
-					req->error_covariance_1[0], req->error_covariance_1[1], req->error_covariance_1[2], req->error_covariance_1[3], req->error_covariance_1[4], req->error_covariance_1[5],
-					req->error_covariance_2[0], req->error_covariance_2[1], req->error_covariance_2[2], req->error_covariance_2[3], req->error_covariance_2[4], req->error_covariance_2[5]);
+					req->quat[0], req->quat[1], req->quat[2], req->quat[3],
+					req->vel[0], req->vel[1], req->vel[2], 
+					req->pos[0], req->pos[1], req->pos[2]);
 				UAS_FCU(uas)->send_message(&msg);
 
 		

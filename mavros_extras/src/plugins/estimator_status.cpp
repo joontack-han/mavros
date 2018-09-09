@@ -1,7 +1,7 @@
 #include <mavros/mavros_plugin.h>
 #include <pluginlib/class_list_macros.h>
-#include <geometry_msgs/PoseStamped.h>
-//#include <mavros_msgs/EstimatorStatus.h>
+//#include <geometry_msgs/PoseStamped.h>
+#include <mavros_msgs/EstimatorStatus.h>
 
 namespace mavplugin {
 /**
@@ -19,7 +19,7 @@ public:
 	void initialize(UAS &uas_)
 	{
  		uas = &uas_;
-		estimator_status_pub = nh.advertise<geometry_msgs::PoseStamped>("est_status", 10);
+		estimator_status_pub = nh.advertise<mavros_msgs::EstimatorStatus>("est_status", 10);
 	}
 
 	const message_map get_rx_handlers() {
@@ -39,7 +39,7 @@ private:
 		mavlink_estimator_status_t estimator_status;
 		mavlink_msg_estimator_status_decode(msg, &estimator_status);
 
-		auto ros_msg = boost::make_shared<geometry_msgs::PoseStamped>();
+		auto ros_msg = boost::make_shared<mavros_msgs::EstimatorStatus>();
 
 		uint32_t sec, ns;
 		sec = estimator_status.time_usec/1000000;
@@ -48,13 +48,9 @@ private:
 
 		//ros_msg->covariances[i] = estimator_status.covariances[i];
 
-		ros_msg->pose.position.x = estimator_status.cov_px;
-		ros_msg->pose.position.y = estimator_status.cov_py;
-		ros_msg->pose.position.z = estimator_status.cov_pz;
-		ros_msg->pose.orientation.w = estimator_status.cov_qw;
-		ros_msg->pose.orientation.x = estimator_status.cov_qx;
-		ros_msg->pose.orientation.y = estimator_status.cov_qy;
-		ros_msg->pose.orientation.z = estimator_status.cov_qz;
+		for (int i=0; i<10; i++) {
+			ros_msg->state[i] = estimator_status.state[i];
+		}
 
 		
 		estimator_status_pub.publish(ros_msg);

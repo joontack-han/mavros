@@ -84,7 +84,9 @@ add_library(mavros_extras
   src/plugins/odar_fused_pose.cpp
   src/plugins/odar_fused_vel.cpp
   src/plugins/odar_pose.cpp
+  src/plugins/odar_sckf.cpp
   src/plugins/estimator_status.cpp
+  src/plugins/estimator_covariance.cpp
 )
 target_link_libraries(mavros_extras
   ${mavros_LIBRARIES}

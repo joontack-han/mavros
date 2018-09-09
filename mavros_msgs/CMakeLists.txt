@@ -38,7 +38,9 @@ add_message_files(
   OdarPWM.msg
   OdarWrench.msg
   OdarChannelCommand.msg
+  OdarSCKF.msg
   EstimatorStatus.msg
+  EstimatorCovariance.msg
 )
 
 add_service_files(

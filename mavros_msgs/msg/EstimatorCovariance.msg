@@ -1,2 +1,2 @@
 std_msgs/Header header
-float32[10] state
+float32[45] covariance

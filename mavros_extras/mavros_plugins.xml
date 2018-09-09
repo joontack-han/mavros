@@ -51,8 +51,14 @@
 	<class name="odar_pose" type="mavplugin::OdarPosePlugin" base_class_type="mavplugin::MavRosPlugin">
 		<description> Odar Pose </description>
 	</class>
+	<class name="odar_sckf" type="mavplugin::OdarSCKFPlugin" base_class_type="mavplugin::MavRosPlugin">
+		<description> Odar SCKF </description>
+	</class>
 	<class name="estimator_status" type="mavplugin::EstimatorStatusPlugin" base_class_type="mavplugin::MavRosPlugin">
 		<description> Estimator Status </description>
+	</class>
+	<class name="estimator_covariance" type="mavplugin::EstimatorCovariancePlugin" base_class_type="mavplugin::MavRosPlugin">
+		<description> Estimator Covariance </description>
 	</class>
 
 

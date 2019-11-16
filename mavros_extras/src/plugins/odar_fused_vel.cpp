@@ -15,7 +15,7 @@ namespace mavplugin {
 			void initialize(UAS &uas_)
 			{
 				uas = &uas_;
-				odar_fused_vel_sub = nh.subscribe("fused_vel", 10, &OdarFusedVelPlugin::odar_fused_vel_cb, this);
+				odar_fused_vel_sub = nh.subscribe("fused_vel", 1, &OdarFusedVelPlugin::odar_fused_vel_cb, this);
 			};
 
 			const message_map get_rx_handlers() {

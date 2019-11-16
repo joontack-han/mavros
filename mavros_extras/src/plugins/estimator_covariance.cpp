@@ -18,7 +18,7 @@ public:
 	void initialize(UAS &uas_)
 	{
  		uas = &uas_;
-		estimator_covariance_pub = nh.advertise<mavros_msgs::EstimatorCovariance>("est_covariance", 10);
+		estimator_covariance_pub = nh.advertise<mavros_msgs::EstimatorCovariance>("est_covariance", 1);
 	}
 
 	const message_map get_rx_handlers() {

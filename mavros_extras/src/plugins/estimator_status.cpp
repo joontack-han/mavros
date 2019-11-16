@@ -19,7 +19,7 @@ public:
 	void initialize(UAS &uas_)
 	{
  		uas = &uas_;
-		estimator_status_pub = nh.advertise<mavros_msgs::EstimatorStatus>("est_status", 10);
+		estimator_status_pub = nh.advertise<mavros_msgs::EstimatorStatus>("est_status", 1);
 	}
 
 	const message_map get_rx_handlers() {

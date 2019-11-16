@@ -15,7 +15,7 @@ namespace mavplugin {
 			void initialize(UAS &uas_)
 			{
 				uas = &uas_;
-				odar_sckf_sub = nh.subscribe("sckf", 10, &OdarSCKFPlugin::odar_sckf_cb, this);
+				odar_sckf_sub = nh.subscribe("sckf", 1, &OdarSCKFPlugin::odar_sckf_cb, this);
 			};
 
 			const message_map get_rx_handlers() {

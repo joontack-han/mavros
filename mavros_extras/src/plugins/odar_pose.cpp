@@ -16,8 +16,8 @@ namespace mavplugin {
 			void initialize(UAS &uas_)
 			{
 				uas = &uas_;
-				odar_pose_pub = nh.advertise<geometry_msgs::PoseStamped>("pose", 10);
-				odar_vel_pub = nh.advertise<geometry_msgs::TwistStamped>("vel", 10);
+				odar_pose_pub = nh.advertise<geometry_msgs::PoseStamped>("pose", 1);
+				odar_vel_pub = nh.advertise<geometry_msgs::TwistStamped>("vel", 1);
 			};
 
 			const message_map get_rx_handlers() {

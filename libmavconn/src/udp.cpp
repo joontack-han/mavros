@@ -39,16 +39,22 @@ static bool resolve_address_udp(io_service &io, int chan, std::string host, unsi
 	error_code ec;
 
 	udp::resolver::query query(host, "");
-	std::for_each(resolver.resolve(query, ec), udp::resolver::iterator(),
-		[&](const udp::endpoint &q_ep) {
-			ep = q_ep;
-			ep.port(port);
-			result = true;
-			logDebug(PFXd "host %s resolved as %s", chan, host.c_str(), to_string_ss(ep).c_str());
-		});
+
+	auto fn = [&](const udp::endpoint &q_ep) {
+		ep = q_ep;
+		ep.port(port);
+		result = true;
+		CONSOLE_BRIDGE_logDebug(PFXd "host %s resolved as %s", chan, host.c_str(), to_string_ss(ep).c_str());
+	};
+
+#if BOOST_ASIO_VERSION >= 101200
+	for (auto q_ep : resolver.resolve(query, ec)) fn(q_ep);
+#else
+	std::for_each(resolver.resolve(query, ec), udp::resolver::iterator(), fn);
+#endif
 
 	if (ec) {
-		logWarn(PFXd "resolve error: %s", chan, ec.message().c_str());
+		CONSOLE_BRIDGE_logWarn(PFXd "resolve error: %s", chan, ec.message().c_str());
 		result = false;
 	}
 
@@ -69,15 +75,15 @@ MAVConnUDP::MAVConnUDP(uint8_t system_id, uint8_t component_id,
 	if (!resolve_address_udp(io_service, channel, bind_host, bind_port, bind_ep))
 		throw DeviceError("udp: resolve", "Bind address resolve failed");
 
-	logInform(PFXd "Bind address: %s", channel, to_string_ss(bind_ep).c_str());
+	CONSOLE_BRIDGE_logInform(PFXd "Bind address: %s", channel, to_string_ss(bind_ep).c_str());
 
 	if (remote_host != "") {
 		remote_exists = resolve_address_udp(io_service, channel, remote_host, remote_port, remote_ep);
 
 		if (remote_exists)
-			logInform(PFXd "Remote address: %s", channel, to_string_ss(remote_ep).c_str());
+			CONSOLE_BRIDGE_logInform(PFXd "Remote address: %s", channel, to_string_ss(remote_ep).c_str());
 		else
-			logWarn(PFXd "Remote address resolve failed.", channel);
+			CONSOLE_BRIDGE_logWarn(PFXd "Remote address resolve failed.", channel);
 	}
 
 	try {
@@ -124,12 +130,12 @@ void MAVConnUDP::close() {
 void MAVConnUDP::send_bytes(const uint8_t *bytes, size_t length)
 {
 	if (!is_open()) {
-		logError(PFXd "send: channel closed!", channel);
+		CONSOLE_BRIDGE_logError(PFXd "send: channel closed!", channel);
 		return;
 	}
 
 	if (!remote_exists) {
-		logDebug(PFXd "send: Remote not known, message dropped.", channel);
+		CONSOLE_BRIDGE_logDebug(PFXd "send: Remote not known, message dropped.", channel);
 		return;
 	}
 
@@ -146,16 +152,16 @@ void MAVConnUDP::send_message(const mavlink_message_t *message, uint8_t sysid, u
 	assert(message != nullptr);
 
 	if (!is_open()) {
-		logError(PFXd "send: channel closed!", channel);
+		CONSOLE_BRIDGE_logError(PFXd "send: channel closed!", channel);
 		return;
 	}
 
 	if (!remote_exists) {
-		logDebug(PFXd "send: Remote not known, message dropped.", channel);
+		CONSOLE_BRIDGE_logDebug(PFXd "send: Remote not known, message dropped.", channel);
 		return;
 	}
 
-	logDebug(PFXd "send: Message-Id: %d [%d bytes] Sys-Id: %d Comp-Id: %d Seq: %d",
+	CONSOLE_BRIDGE_logDebug(PFXd "send: Message-Id: %d [%d bytes] Sys-Id: %d Comp-Id: %d Seq: %d",
 			channel, message->msgid, message->len, sysid, compid, message->seq);
 
 	MsgBuffer *buf = new_msgbuffer(message, sysid, compid);
@@ -183,13 +189,13 @@ void MAVConnUDP::async_receive_end(error_code error, size_t bytes_transferred)
 	mavlink_status_t status;
 
 	if (error) {
-		logError(PFXd "receive: %s", channel, error.message().c_str());
+		CONSOLE_BRIDGE_logError(PFXd "receive: %s", channel, error.message().c_str());
 		close();
 		return;
 	}
 
 	if (remote_ep != last_remote_ep) {
-		logInform(PFXd "Remote address: %s", channel, to_string_ss(remote_ep).c_str());
+		CONSOLE_BRIDGE_logInform(PFXd "Remote address: %s", channel, to_string_ss(remote_ep).c_str());
 		remote_exists = true;
 		last_remote_ep = remote_ep;
 	}
@@ -197,7 +203,7 @@ void MAVConnUDP::async_receive_end(error_code error, size_t bytes_transferred)
 	iostat_rx_add(bytes_transferred);
 	for (size_t i = 0; i < bytes_transferred; i++) {
 		if (mavlink_parse_char(channel, rx_buf[i], &message, &status)) {
-			logDebug(PFXd "recv: Message-Id: %d [%d bytes] Sys-Id: %d Comp-Id: %d Seq: %d",
+			CONSOLE_BRIDGE_logDebug(PFXd "recv: Message-Id: %d [%d bytes] Sys-Id: %d Comp-Id: %d Seq: %d",
 					channel, message.msgid, message.len, message.sysid, message.compid, message.seq);
 
 			/* emit */ message_received(&message, message.sysid, message.compid);
@@ -230,11 +236,11 @@ void MAVConnUDP::do_sendto(bool check_tx_state)
 void MAVConnUDP::async_sendto_end(error_code error, size_t bytes_transferred)
 {
 	if (error == boost::asio::error::network_unreachable) {
-		logWarn(PFXd "sendto: %s, retrying", channel, error.message().c_str());
+		CONSOLE_BRIDGE_logWarn(PFXd "sendto: %s, retrying", channel, error.message().c_str());
 		// do not return, try to resend
 	}
 	else if (error) {
-		logError(PFXd "sendto: %s", channel, error.message().c_str());
+		CONSOLE_BRIDGE_logError(PFXd "sendto: %s", channel, error.message().c_str());
 		close();
 		return;
 	}

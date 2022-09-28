@@ -38,7 +38,7 @@ MAVConnSerial::MAVConnSerial(uint8_t system_id, uint8_t component_id,
 	io_service(),
 	serial_dev(io_service)
 {
-	logInform(PFXd "device: %s @ %d bps", channel, device.c_str(), baudrate);
+	CONSOLE_BRIDGE_logInform(PFXd "device: %s @ %d bps", channel, device.c_str(), baudrate);
 
 	try {
 		serial_dev.open(device);
@@ -89,7 +89,7 @@ void MAVConnSerial::close() {
 void MAVConnSerial::send_bytes(const uint8_t *bytes, size_t length)
 {
 	if (!is_open()) {
-		logError(PFXd "send: channel closed!", channel);
+		CONSOLE_BRIDGE_logError(PFXd "send: channel closed!", channel);
 		return;
 	}
 
@@ -106,11 +106,11 @@ void MAVConnSerial::send_message(const mavlink_message_t *message, uint8_t sysid
 	assert(message != nullptr);
 
 	if (!is_open()) {
-		logError(PFXd "send: channel closed!", channel);
+		CONSOLE_BRIDGE_logError(PFXd "send: channel closed!", channel);
 		return;
 	}
 
-	logDebug(PFXd "send: Message-Id: %d [%d bytes] Sys-Id: %d Comp-Id: %d Seq: %d",
+	CONSOLE_BRIDGE_logDebug(PFXd "send: Message-Id: %d [%d bytes] Sys-Id: %d Comp-Id: %d Seq: %d",
 			channel, message->msgid, message->len, sysid, compid, message->seq);
 
 	MsgBuffer *buf = new_msgbuffer(message, sysid, compid);
@@ -137,7 +137,7 @@ void MAVConnSerial::async_read_end(error_code error, size_t bytes_transferred)
 	mavlink_status_t status;
 
 	if (error) {
-		logError(PFXd "receive: %s", channel, error.message().c_str());
+		CONSOLE_BRIDGE_logError(PFXd "receive: %s", channel, error.message().c_str());
 		close();
 		return;
 	}
@@ -145,7 +145,7 @@ void MAVConnSerial::async_read_end(error_code error, size_t bytes_transferred)
 	iostat_rx_add(bytes_transferred);
 	for (size_t i = 0; i < bytes_transferred; i++) {
 		if (mavlink_parse_char(channel, rx_buf[i], &message, &status)) {
-			logDebug(PFXd "recv: Message-Id: %d [%d bytes] Sys-Id: %d Comp-Id: %d Seq: %d",
+			CONSOLE_BRIDGE_logDebug(PFXd "recv: Message-Id: %d [%d bytes] Sys-Id: %d Comp-Id: %d Seq: %d",
 					channel, message.msgid, message.len, message.sysid, message.compid, message.seq);
 
 			/* emit */ message_received(&message, message.sysid, message.compid);
@@ -177,7 +177,7 @@ void MAVConnSerial::do_write(bool check_tx_state)
 void MAVConnSerial::async_write_end(error_code error, size_t bytes_transferred)
 {
 	if (error) {
-		logError(PFXd "write: %s", channel, error.message().c_str());
+		CONSOLE_BRIDGE_logError(PFXd "write: %s", channel, error.message().c_str());
 		close();
 		return;
 	}
